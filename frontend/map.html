@@ -1990,27 +1990,17 @@ body{
 
 
         <div class="logo">
-
-            FV
-
+            <img src="assets/logo.jpg" alt="FieryVision Logo" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
         </div>
 
-
         <div>
-
             <div class="brand-name">
-
                 FieryVision
-
             </div>
-
 
             <div class="brand-sub">
-
-                AI Thermal Intelligence &nbsp;•&nbsp; SIH 2026
-
+                AI Thermal Intelligence
             </div>
-
         </div>
 
 
@@ -2312,12 +2302,16 @@ body{
                 All Priorities
             </option>
 
+            <option value="critical">
+                Critical
+            </option>
+
             <option value="high">
                 High
             </option>
 
-            <option value="medium">
-                Medium
+            <option value="moderate">
+                Moderate
             </option>
 
             <option value="low">
@@ -2376,6 +2370,31 @@ body{
 
             <option value="low">
                 Low
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            ML Anomaly
+        </label>
+
+        <select id="anomalyFilter">
+
+            <option value="all">
+                All Signatures
+            </option>
+
+            <option value="anomaly">
+                Anomalies Only (Isolation Forest)
+            </option>
+
+            <option value="normal">
+                Normal Signatures
             </option>
 
         </select>
@@ -3269,6 +3288,18 @@ function openDrawer(event){
             )}
 
             ${detail(
+                "ML Anomaly Status",
+                (event.is_anomaly || event.anomaly_flag)
+                    ? "Outlier Anomaly (Isolation Forest)"
+                    : "Normal Thermal Behavior"
+            )}
+
+            ${detail(
+                "ML Anomaly Score",
+                event.anomaly_score != null ? event.anomaly_score + " / 1.0" : null
+            )}
+
+            ${detail(
                 "FRP (MW)",
                 event.frp
             )}
@@ -3637,6 +3668,13 @@ function applyFilters(){
         ).value;
 
 
+    const anomaly =
+        document
+        .getElementById(
+            "anomalyFilter"
+        )?.value || "all";
+
+
     const filtered =
         allEvents.filter(
             event => {
@@ -3661,18 +3699,39 @@ function applyFilters(){
                     priority !== "all"
                 ){
 
+                    const pVal = String(
+                        event.priority ||
+                        ""
+                    ).toLowerCase();
+
                     if(
-                        String(
-                            event.priority ||
-                            ""
-                        ).toLowerCase()
-                        !== priority
+                        priority === "medium" || priority === "moderate"
+                    ){
+                        if(pVal !== "medium" && pVal !== "moderate"){
+                            return false;
+                        }
+                    }
+                    else if(
+                        pVal !== priority
                     ){
 
                         return false;
 
                     }
 
+                }
+
+
+                if(
+                    anomaly !== "all"
+                ){
+                    const isAnom = Boolean(event.is_anomaly || event.anomaly_flag);
+                    if(anomaly === "anomaly" && !isAnom){
+                        return false;
+                    }
+                    if(anomaly === "normal" && isAnom){
+                        return false;
+                    }
                 }
 
 
@@ -3691,6 +3750,8 @@ function applyFilters(){
                         value === "true" ||
                         value === "yes" ||
                         value === "persistent" ||
+                        value === "high_persistence" ||
+                        value === "recurrent_heat_source" ||
                         value === "1";
 
 
@@ -4027,7 +4088,8 @@ document
     "classificationFilter",
     "priorityFilter",
     "persistenceFilter",
-    "confidenceFilter"
+    "confidenceFilter",
+    "anomalyFilter"
 
 ].forEach(
     id => {

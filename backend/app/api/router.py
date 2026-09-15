@@ -26,6 +26,7 @@ from app.services.industrial_service import (
 )
 from app.services.temporal_service import analyze_temporal_persistence
 from app.services.evidence_service import evaluate_evidence
+from app.services.anomaly_service import detect_thermal_anomaly
 from app.services.satellite_service import get_satellite_context_metadata
 from app.services.llm_service import generate_explanation, generate_chat_response
 
@@ -62,8 +63,10 @@ async def get_active_events():
         fac, dist_m = find_nearest_facility(lat, lon)
         inside_ind = is_inside_industrial_zone(lat, lon)
         landcover = get_landcover_context(lat, lon)
-        
         temporal = analyze_temporal_persistence(lat, lon, raw_events)
+        
+        # ML Anomaly Detection (Isolation Forest)
+        is_anom, anom_score = detect_thermal_anomaly(ev, temporal)
         
         evidence_eval = evaluate_evidence(
             lat=lat,
@@ -74,7 +77,9 @@ async def get_active_events():
             landcover=landcover,
             temporal_summary=temporal,
             frp=ev.get("frp"),
-            daynight=ev.get("daynight")
+            daynight=ev.get("daynight"),
+            anomaly_score=anom_score,
+            anomaly_flag=is_anom
         )
         
         canonical_ev = CanonicalEventSchema(
@@ -106,6 +111,9 @@ async def get_active_events():
             classification_confidence=evidence_eval["classification_confidence"],
             risk_score=evidence_eval["risk_score"],
             priority=evidence_eval["priority"],
+            anomaly_score=anom_score,
+            is_anomaly=is_anom,
+            anomaly_flag=is_anom,
             evidence=evidence_eval["evidence"],
             explanation=None
         )
@@ -143,6 +151,9 @@ async def get_event_details(event_id: str = Path(..., description="Target event 
     landcover = get_landcover_context(lat, lon)
     temporal = analyze_temporal_persistence(lat, lon, raw_events)
     
+    # ML Anomaly Detection (Isolation Forest)
+    is_anom, anom_score = detect_thermal_anomaly(target_ev, temporal)
+
     evidence_eval = evaluate_evidence(
         lat=lat,
         lon=lon,
@@ -152,7 +163,9 @@ async def get_event_details(event_id: str = Path(..., description="Target event 
         landcover=landcover,
         temporal_summary=temporal,
         frp=target_ev.get("frp"),
-        daynight=target_ev.get("daynight")
+        daynight=target_ev.get("daynight"),
+        anomaly_score=anom_score,
+        anomaly_flag=is_anom
     )
 
     analysis_payload = {
@@ -166,7 +179,9 @@ async def get_event_details(event_id: str = Path(..., description="Target event 
         "nearest_facility_name": fac["name"] if fac else "None",
         "distance_to_facility_m": round(dist_m, 1) if fac else None,
         "landcover": landcover,
-        "evidence": evidence_eval["evidence"]
+        "evidence": evidence_eval["evidence"],
+        "anomaly_score": anom_score,
+        "is_anomaly": is_anom
     }
 
     explanation_text, _ = await generate_explanation(analysis_payload)
@@ -200,6 +215,9 @@ async def get_event_details(event_id: str = Path(..., description="Target event 
         classification_confidence=evidence_eval["classification_confidence"],
         risk_score=evidence_eval["risk_score"],
         priority=evidence_eval["priority"],
+        anomaly_score=anom_score,
+        is_anomaly=is_anom,
+        anomaly_flag=is_anom,
         evidence=evidence_eval["evidence"],
         explanation=explanation_text
     )
@@ -219,7 +237,7 @@ async def get_facilities():
 @router.get("/statistics", response_model=StatisticsResponse, tags=["Statistics"])
 async def get_statistics():
     """
-    Return summary statistics distinguishing classified vs unclassified events without fabricating ground truth.
+    Return summary statistics distinguishing classified vs unclassified events and risk priorities.
     """
     raw_events, data_mode, _ = await fetch_firms_active_events()
     
@@ -228,7 +246,10 @@ async def get_statistics():
     persistent_cnt = 0
     natural_cnt = 0
     agricultural_cnt = 0
+    critical_priority_cnt = 0
     high_priority_cnt = 0
+    moderate_priority_cnt = 0
+    low_priority_cnt = 0
     classified_cnt = 0
     unclassified_cnt = 0
 
@@ -240,6 +261,8 @@ async def get_statistics():
         landcover = get_landcover_context(lat, lon)
         temporal = analyze_temporal_persistence(lat, lon, raw_events)
         
+        is_anom, anom_score = detect_thermal_anomaly(ev, temporal)
+
         evidence_eval = evaluate_evidence(
             lat=lat,
             lon=lon,
@@ -249,11 +272,13 @@ async def get_statistics():
             landcover=landcover,
             temporal_summary=temporal,
             frp=ev.get("frp"),
-            daynight=ev.get("daynight")
+            daynight=ev.get("daynight"),
+            anomaly_score=anom_score,
+            anomaly_flag=is_anom
         )
 
         cls = evidence_eval["classification"]
-        prio = evidence_eval["priority"]
+        prio = str(evidence_eval["priority"]).lower()
         
         if cls != "unclassified":
             classified_cnt += 1
@@ -266,11 +291,17 @@ async def get_statistics():
         else:
             unclassified_cnt += 1
 
-        if temporal.get("persistence") in ["high_persistence", "recurrent_heat_source"]:
+        if temporal.get("persistence") in ["high_persistence", "recurrent_heat_source", "Persistent"]:
             persistent_cnt += 1
 
-        if prio == "high":
+        if prio == "critical":
+            critical_priority_cnt += 1
+        elif prio == "high":
             high_priority_cnt += 1
+        elif prio in ["moderate", "medium"]:
+            moderate_priority_cnt += 1
+        else:
+            low_priority_cnt += 1
 
     return StatisticsResponse(
         total_events=total,
@@ -278,7 +309,10 @@ async def get_statistics():
         persistent_events=persistent_cnt,
         natural_events=natural_cnt,
         agricultural_events=agricultural_cnt,
+        critical_priority_events=critical_priority_cnt,
         high_priority_events=high_priority_cnt,
+        moderate_priority_events=moderate_priority_cnt,
+        low_priority_events=low_priority_cnt,
         classified_events=classified_cnt,
         unclassified_events=unclassified_cnt,
         classification_mode="evidence_based"
@@ -289,7 +323,7 @@ async def analyse_location(payload: LocationAnalysisRequest):
     """
     Coordinate-based AI investigation for arbitrary lat/lon input.
     Validates coordinates, evaluates nearby anomalies, facilities, landcover, temporal history,
-    computes evidence-based risk, and requests optional Qwen explanation.
+    computes evidence-based risk & ML anomaly score, and requests optional Qwen explanation.
     """
     valid, err_msg = validate_coordinates(payload.latitude, payload.longitude)
     if not valid:
@@ -315,6 +349,9 @@ async def analyse_location(payload: LocationAnalysisRequest):
     landcover = get_landcover_context(lat, lon)
     temporal = analyze_temporal_persistence(lat, lon, raw_events)
 
+    target_ev_data = nearby_thermal[0] if nearby_thermal else {"latitude": lat, "longitude": lon}
+    is_anom, anom_score = detect_thermal_anomaly(target_ev_data, temporal) if thermal_detected else (False, 0.0)
+
     frp_val = nearby_thermal[0].get("frp") if nearby_thermal else None
     daynight_val = nearby_thermal[0].get("daynight") if nearby_thermal else None
 
@@ -327,7 +364,9 @@ async def analyse_location(payload: LocationAnalysisRequest):
         landcover=landcover,
         temporal_summary=temporal,
         frp=frp_val,
-        daynight=daynight_val
+        daynight=daynight_val,
+        anomaly_score=anom_score,
+        anomaly_flag=is_anom
     )
 
     assessment_mode = "evidence_based" if thermal_detected else ("no_activity" if in_zone else "insufficient_evidence")
@@ -343,7 +382,9 @@ async def analyse_location(payload: LocationAnalysisRequest):
         "nearest_facility_name": fac["name"] if fac else "None",
         "distance_to_facility_m": round(dist_m, 1) if fac else None,
         "landcover": landcover,
-        "evidence": evidence_eval["evidence"]
+        "evidence": evidence_eval["evidence"],
+        "anomaly_score": anom_score,
+        "is_anomaly": is_anom
     }
 
     explanation_text, _ = await generate_explanation(analysis_payload)
@@ -367,6 +408,9 @@ async def analyse_location(payload: LocationAnalysisRequest):
         classification_confidence=evidence_eval["classification_confidence"] if thermal_detected else None,
         risk_score=evidence_eval["risk_score"] if thermal_detected else 0.0,
         priority=evidence_eval["priority"] if thermal_detected else "low",
+        anomaly_score=anom_score if thermal_detected else 0.0,
+        is_anomaly=is_anom if thermal_detected else False,
+        anomaly_flag=is_anom if thermal_detected else False,
         evidence=evidence_eval["evidence"],
         explanation=explanation_text
     )

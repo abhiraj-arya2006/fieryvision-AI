@@ -120,7 +120,7 @@ async def fetch_firms_active_events() -> Tuple[List[Dict[str, Any]], str, str]:
                                         "event_id": f"FIRMS-LIVE-{idx:03d}",
                                         "latitude": lat,
                                         "longitude": lon,
-                                        "acq_date": row.get("acq_date", datetime.utcnow().strftime("%Y-%m-%d")),
+                                        "acq_date": row.get("acq_date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
                                         "acq_time": row.get("acq_time", "0000"),
                                         "frp": float(row.get("frp", 0.0)) if row.get("frp") else None,
                                         "brightness": float(row.get("bright_ti4", 0.0)) if row.get("bright_ti4") else None,

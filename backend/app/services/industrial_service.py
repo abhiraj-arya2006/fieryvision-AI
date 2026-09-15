@@ -90,11 +90,82 @@ def is_inside_industrial_zone(lat: float, lon: float, threshold_m: float = 800.0
     _, dist = find_nearest_facility(lat, lon)
     return dist <= threshold_m
 
+import os
+import logging
+
+logger = logging.getLogger("fieryvision.landcover")
+
+ESA_RASTER_PATH = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "..",
+        "data",
+        "landcover",
+        "giaspura_landcover_esa.tif"
+    )
+)
+
+# Standard ESA WorldCover 10m class map
+ESA_WORLDCOVER_CLASSES = {
+    10: "Tree cover",
+    20: "Shrubland",
+    30: "Grassland",
+    40: "Cropland",
+    50: "Built-up",
+    60: "Bare / sparse vegetation",
+    70: "Snow and ice",
+    80: "Water",
+    90: "Herbaceous wetland",
+    95: "Mangroves",
+    100: "Moss and lichen",
+}
+
+def get_esa_raster_landcover(lat: float, lon: float) -> Optional[str]:
+    """Sample land-cover class from local ESA WorldCover 10m GeoTIFF raster."""
+    if not os.path.exists(ESA_RASTER_PATH):
+        return None
+    try:
+        import rasterio
+        with rasterio.open(ESA_RASTER_PATH) as src:
+            bounds = src.bounds
+            if not (bounds.left <= lon <= bounds.right and bounds.bottom <= lat <= bounds.top):
+                return None
+            sampled = list(src.sample([(lon, lat)]))
+            if sampled and len(sampled[0]) > 0:
+                pixel_val = int(sampled[0][0])
+                return ESA_WORLDCOVER_CLASSES.get(pixel_val)
+    except Exception as exc:
+        logger.debug("Rasterio ESA WorldCover sampling skipped: %s", exc)
+    return None
+
 def get_landcover_context(lat: float, lon: float) -> str:
     """
-    Determine landcover classification based on distance to Giaspura industrial hub vs surrounding belt.
+    Determine landcover classification using authoritative ESA WorldCover satellite raster
+    with distance-to-facility heuristic fallback.
     """
+    esa_class = get_esa_raster_landcover(lat, lon)
     fac, dist = find_nearest_facility(lat, lon)
+    
+    if esa_class:
+        if esa_class == "Built-up":
+            if dist <= 1200.0:
+                return "Built-up / Industrial (ESA WorldCover 10m)"
+            return "Built-up / Urban (ESA WorldCover 10m)"
+        elif esa_class == "Cropland":
+            return "Cropland / Agricultural (ESA WorldCover 10m)"
+        elif esa_class == "Tree cover":
+            return "Tree cover / Forest (ESA WorldCover 10m)"
+        elif esa_class == "Grassland":
+            return "Grassland (ESA WorldCover 10m)"
+        elif esa_class == "Bare / sparse vegetation":
+            return "Bare Land / Sparse Vegetation (ESA WorldCover 10m)"
+        elif esa_class == "Water":
+            return "Water Body (ESA WorldCover 10m)"
+        return f"{esa_class} (ESA WorldCover 10m)"
+
+    # Fallback heuristic if raster is absent or point is outside bounds
     if dist <= 1200.0:
         return "Industrial & Built-up Land (Giaspura Industrial Area)"
     elif dist <= 3000.0:

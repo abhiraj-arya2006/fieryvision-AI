@@ -1,11 +1,8 @@
 {
-  "executionEnvironments": [
-    {
-      "root": "backend",
-      "extraPaths": [
-        "backend"
-      ]
-    }
+  "include": [
+    "backend"
   ],
-  "pythonPath": "C:\\Users\\ABHIRAJ ARYA\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  "extraPaths": [
+    "backend"
+  ]
 }

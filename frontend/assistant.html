@@ -12,24 +12,37 @@
 
   <style>
     :root {
-      --primary-accent: #e839f9;
-      --purple: #9333ea;
+      --bg-base: #050913;
+      --bg-surface: #091120;
+      --bg-panel: rgba(10, 18, 33, 0.78);
+      --bg-panel-subtle: rgba(15, 27, 48, 0.52);
+      --bg-input: rgba(6, 12, 22, 0.75);
+
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --border-medium: rgba(56, 189, 248, 0.24);
+      --border-highlight: rgba(56, 189, 248, 0.45);
+
+      --primary-accent: #0284c7;
+      --primary-hover: #0369a1;
+      --cyan: #38bdf8;
+      --cyan-subtle: rgba(56, 189, 248, 0.12);
+      --blue: #3b82f6;
+      --amber: #f59e0b;
       --orange: #fb923c;
-      --cyan: #22d3ee;
-      --green: #34d399;
+      --green: #10b981;
       --red: #ef4444;
 
-      --text-main: #e5e7eb;
-      --text-secondary: #cbd5e1;
-      --text-faint: #94a3b8;
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-faint: #64748b;
 
-      --glass-bg: rgba(22, 17, 49, 0.78);
-      --glass-bg-subtle: rgba(30, 27, 75, 0.48);
+      --glass-bg: var(--bg-panel);
+      --glass-bg-subtle: var(--bg-panel-subtle);
+      --glass-border: var(--border-subtle);
+      --glass-border-cyan: var(--border-medium);
 
-      --glass-border: rgba(232, 57, 249, 0.22);
-      --glass-border-cyan: rgba(34, 211, 238, 0.25);
-
-      --shadow: 0 15px 40px rgba(0,0,0,.45);
+      --shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.12);
     }
 
     * {
@@ -37,6 +50,7 @@
       margin: 0;
       padding: 0;
       font-family:
+        Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -50,21 +64,21 @@
 
       background:
         radial-gradient(
-          circle at 15% 15%,
-          rgba(232,57,249,.18),
-          transparent 30%
+          circle at 18% 15%,
+          rgba(14, 165, 233, 0.08),
+          transparent 35%
         ),
         radial-gradient(
-          circle at 85% 70%,
-          rgba(34,211,238,.13),
-          transparent 30%
+          circle at 82% 75%,
+          rgba(59, 130, 246, 0.06),
+          transparent 35%
         ),
         linear-gradient(
-          135deg,
-          #0f0b2d,
-          #24104b 45%,
-          #401c42 75%,
-          #171126
+          140deg,
+          #040711 0%,
+          #08101d 42%,
+          #0b1629 78%,
+          #050812 100%
         );
 
       background-attachment: fixed;
@@ -90,7 +104,7 @@
 
     .fv-nav-bar {
       margin-top: 16px;
-      padding: 15px 20px;
+      padding: 14px 20px;
 
       display: flex;
       align-items: center;
@@ -99,7 +113,7 @@
 
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 15px;
+      border-radius: 14px;
 
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
@@ -112,8 +126,8 @@
     }
 
     .fv-brand-icon {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
 
       display: flex;
       align-items: center;
@@ -121,66 +135,75 @@
 
       border-radius: 10px;
 
-      font-size: 22px;
+      font-size: 20px;
 
       background:
         linear-gradient(
           135deg,
-          var(--primary-accent),
-          var(--orange)
+          #0369a1,
+          #0f172a
         );
 
-      box-shadow:
-        0 0 20px rgba(232,57,249,.35);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
     }
 
     .fv-brand-text h1 {
-      font-size: 1.05rem;
-      color: white;
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
     }
 
     .fv-brand-text p {
-      margin-top: 3px;
+      margin-top: 2px;
       font-size: .72rem;
       color: var(--cyan);
+      font-weight: 500;
     }
 
     .fv-nav-tabs {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       padding: 4px;
 
-      background: rgba(5,5,20,.5);
-      border-radius: 10px;
+      background: rgba(3, 7, 18, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      border-radius: 9px;
     }
 
     .fv-nav-tab {
-      padding: 8px 15px;
+      padding: 7px 14px;
 
       border: 1px solid transparent;
-      border-radius: 7px;
+      border-radius: 6px;
 
-      color: var(--text-faint);
+      color: var(--text-secondary);
       background: transparent;
 
-      font-size: .8rem;
+      font-size: .78rem;
       font-weight: 600;
+      transition: all .2s ease;
+    }
+
+    .fv-nav-tab:hover {
+      color: #ffffff;
     }
 
     .fv-nav-tab.active {
-      color: white;
+      color: #ffffff;
 
-      border-color: var(--primary-accent);
+      border-color: rgba(56, 189, 248, 0.35);
 
       background:
         linear-gradient(
           135deg,
-          rgba(232,57,249,.25),
-          rgba(34,211,238,.15)
+          rgba(2, 132, 199, 0.28),
+          rgba(56, 189, 248, 0.12)
         );
 
       box-shadow:
-        0 0 15px rgba(232,57,249,.2);
+        0 0 12px rgba(56, 189, 248, 0.15);
     }
 
     .fv-nav-tab.disabled {
@@ -193,27 +216,28 @@
       align-items: center;
       gap: 8px;
 
-      padding: 7px 12px;
+      padding: 6px 12px;
 
       border-radius: 999px;
 
       color: var(--cyan);
-      background: rgba(34,211,238,.08);
-      border: 1px solid rgba(34,211,238,.3);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.24);
 
       font-size: .7rem;
       font-weight: 700;
+      letter-spacing: .4px;
       white-space: nowrap;
     }
 
     .fv-status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
 
       border-radius: 50%;
       background: var(--cyan);
 
-      box-shadow: 0 0 10px var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
 
       animation: pulse 2s infinite;
     }
@@ -234,29 +258,32 @@
 
     .fv-header-section {
       text-align: center;
-      padding: 42px 0 30px;
+      padding: 38px 0 26px;
     }
 
     .fv-header-title {
-      font-size: clamp(2rem,5vw,3rem);
+      font-size: clamp(1.9rem, 4.5vw, 2.75rem);
       font-weight: 800;
+      letter-spacing: -0.6px;
 
       background:
         linear-gradient(
-          90deg,
-          white,
-          var(--cyan),
-          var(--primary-accent)
+          135deg,
+          #ffffff 20%,
+          #e0f2fe 60%,
+          #38bdf8 100%
         );
 
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .fv-header-subtitle {
       margin-top: 8px;
       color: var(--text-secondary);
-      font-size: 1rem;
+      font-size: .92rem;
+      font-weight: 400;
     }
 
     /* ================= CARD ================= */
@@ -264,13 +291,13 @@
     .fv-card {
       position: relative;
 
-      padding: 23px;
+      padding: 22px;
       margin-bottom: 20px;
 
       background: var(--glass-bg);
 
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      border-radius: 14px;
 
       backdrop-filter: blur(16px);
 
@@ -295,8 +322,8 @@
         linear-gradient(
           90deg,
           transparent,
-          var(--cyan),
-          var(--primary-accent),
+          rgba(56, 189, 248, 0.8),
+          rgba(2, 132, 199, 0.4),
           transparent
         );
     }
@@ -310,12 +337,14 @@
     }
 
     .fv-card-header h2 {
-      font-size: 1.05rem;
-      color: white;
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
     }
 
     .fv-card-header-icon {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     /* ================= INPUT ================= */
@@ -323,7 +352,7 @@
     .fv-form {
       display: grid;
       grid-template-columns: 1fr 1fr auto;
-      gap: 17px;
+      gap: 16px;
       align-items: end;
     }
 
@@ -336,7 +365,7 @@
     .fv-label {
       color: var(--text-secondary);
 
-      font-size: .72rem;
+      font-size: .7rem;
       font-weight: 700;
 
       text-transform: uppercase;
@@ -348,21 +377,22 @@
 
       padding: 12px 14px;
 
-      color: white;
+      color: #ffffff;
 
-      background: rgba(5,5,20,.65);
+      background: var(--bg-input);
 
-      border: 1px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 8px;
 
       outline: none;
+      transition: all .2s ease;
     }
 
     .fv-input:focus {
       border-color: var(--cyan);
 
       box-shadow:
-        0 0 14px rgba(34,211,238,.2);
+        0 0 14px rgba(56, 189, 248, 0.2);
     }
 
     .fv-input.has-error {
@@ -376,7 +406,7 @@
 
     .fv-btn-primary {
       min-width: 150px;
-      height: 46px;
+      height: 45px;
 
       display: flex;
       align-items: center;
@@ -385,29 +415,31 @@
 
       padding: 0 22px;
 
-      color: white;
+      color: #ffffff;
 
       background:
         linear-gradient(
           135deg,
-          var(--primary-accent),
-          #a21caf
+          #0284c7,
+          #2563eb
         );
 
-      border: 1px solid rgba(255,255,255,.2);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 8px;
 
       font-weight: 700;
+      font-size: .84rem;
 
       box-shadow:
-        0 0 20px rgba(232,57,249,.25);
+        0 4px 16px rgba(2, 132, 199, 0.28);
 
-      transition: .2s;
+      transition: all .2s ease;
     }
 
     .fv-btn-primary:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.1);
+      transform: translateY(-1px);
+      filter: brightness(1.12);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.38);
     }
 
     .fv-btn-primary:disabled {
@@ -417,11 +449,11 @@
     }
 
     .fv-spinner {
-      width: 17px;
-      height: 17px;
+      width: 16px;
+      height: 16px;
 
       border: 2px solid rgba(255,255,255,.3);
-      border-top-color: white;
+      border-top-color: #ffffff;
 
       border-radius: 50%;
 
@@ -442,9 +474,9 @@
 
       color: #fecaca;
 
-      background: rgba(239,68,68,.12);
+      background: rgba(239, 68, 68, 0.08);
 
-      border: 1px solid rgba(239,68,68,.4);
+      border: 1px solid rgba(239, 68, 68, 0.3);
       border-radius: 10px;
     }
 
@@ -460,19 +492,19 @@
     }
 
     .fv-metric-tile {
-      padding: 17px;
+      padding: 16px;
 
       background: var(--glass-bg-subtle);
 
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 11px;
     }
 
     .fv-metric-tile.highlight {
       border-color: var(--glass-border-cyan);
 
       background:
-        rgba(34,211,238,.06);
+        rgba(56, 189, 248, 0.06);
     }
 
     .fv-metric-tile-title {
@@ -486,11 +518,11 @@
     }
 
     .fv-metric-tile-value {
-      margin-top: 7px;
+      margin-top: 6px;
 
-      color: white;
+      color: #ffffff;
 
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
     }
 
@@ -507,38 +539,46 @@
       display: inline-flex;
       align-items: center;
 
-      padding: 4px 10px;
+      padding: 4px 9px;
 
-      border-radius: 6px;
+      border-radius: 5px;
 
-      font-size: .7rem;
+      font-size: .68rem;
       font-weight: 800;
 
       text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .fv-badge-critical {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
     }
 
     .fv-badge-danger {
-      color: #fca5a5;
-      background: rgba(239,68,68,.15);
-      border: 1px solid #ef4444;
+      color: #fb923c;
+      background: rgba(251, 146, 60, 0.12);
+      border: 1px solid rgba(251, 146, 60, 0.4);
     }
 
     .fv-badge-warning {
-      color: var(--orange);
-      background: rgba(251,146,60,.15);
-      border: 1px solid var(--orange);
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.35);
     }
 
     .fv-badge-success {
       color: var(--green);
-      background: rgba(52,211,153,.12);
-      border: 1px solid var(--green);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .fv-badge-neutral {
       color: var(--text-secondary);
-      background: rgba(148,163,184,.12);
-      border: 1px solid var(--text-faint);
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
     }
 
     /* ================= GRID ================= */
@@ -566,11 +606,11 @@
       align-items: center;
       gap: 8px;
 
-      margin-bottom: 15px;
+      margin-bottom: 14px;
 
       color: var(--cyan);
 
-      font-size: .76rem;
+      font-size: .74rem;
       font-weight: 800;
 
       text-transform: uppercase;
@@ -582,7 +622,7 @@
     .fv-data-table {
       display: flex;
       flex-direction: column;
-      gap: 11px;
+      gap: 10px;
     }
 
     .fv-data-row {
@@ -590,12 +630,12 @@
       justify-content: space-between;
       gap: 20px;
 
-      padding-bottom: 9px;
+      padding-bottom: 8px;
 
       border-bottom:
-        1px solid rgba(255,255,255,.05);
+        1px solid rgba(148, 163, 184, 0.08);
 
-      font-size: .83rem;
+      font-size: .82rem;
     }
 
     .fv-data-row:last-child {
@@ -607,10 +647,10 @@
     }
 
     .fv-data-val {
-      color: white;
-      font-weight: 700;
+      color: #ffffff;
+      font-weight: 600;
       text-align: right;
-      font-family: monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     /* ================= PRIORITY ================= */
@@ -618,16 +658,16 @@
     .fv-priority-box {
       padding: 18px;
 
-      border-radius: 12px;
+      border-radius: 11px;
 
       background:
         linear-gradient(
           135deg,
-          rgba(239,68,68,.12),
-          rgba(232,57,249,.07)
+          rgba(239, 68, 68, 0.08),
+          rgba(56, 189, 248, 0.04)
         );
 
-      border: 1px solid rgba(239,68,68,.25);
+      border: 1px solid rgba(239, 68, 68, 0.22);
     }
 
     .fv-priority-score {
@@ -639,23 +679,24 @@
     }
 
     .fv-score-number {
-      font-size: 2.3rem;
+      font-size: 2.2rem;
       font-weight: 900;
-      color: white;
+      color: #ffffff;
+      letter-spacing: -0.5px;
     }
 
     .fv-score-label {
       color: var(--text-secondary);
-      font-size: .75rem;
+      font-size: .74rem;
     }
 
     .fv-progress {
       width: 100%;
-      height: 8px;
+      height: 7px;
 
       overflow: hidden;
 
-      background: rgba(255,255,255,.08);
+      background: rgba(148, 163, 184, 0.1);
 
       border-radius: 999px;
     }
@@ -666,9 +707,10 @@
       background:
         linear-gradient(
           90deg,
+          var(--green),
+          var(--amber),
           var(--orange),
-          var(--red),
-          var(--primary-accent)
+          var(--red)
         );
 
       border-radius: inherit;
@@ -682,22 +724,22 @@
       align-items: center;
       gap: 20px;
 
-      padding: 18px 20px;
+      padding: 16px 20px;
       margin-bottom: 20px;
 
-      background: rgba(34,211,238,.06);
+      background: rgba(56, 189, 248, 0.05);
 
       border: 1px solid var(--glass-border-cyan);
       border-radius: 12px;
     }
 
     .fv-satellite-title {
-      color: white;
+      color: #ffffff;
       font-weight: 700;
     }
 
     .fv-satellite-sub {
-      margin-top: 4px;
+      margin-top: 3px;
       color: var(--text-secondary);
       font-size: .78rem;
     }
@@ -707,43 +749,45 @@
       align-items: center;
       gap: 8px;
 
-      padding: 10px 17px;
+      padding: 9px 16px;
 
-      color: white;
+      color: #ffffff;
 
       background:
-        rgba(34,211,238,.12);
+        rgba(56, 189, 248, 0.1);
 
-      border: 1px solid var(--cyan);
-      border-radius: 8px;
+      border: 1px solid var(--border-medium);
+      border-radius: 7px;
 
-      font-size: .8rem;
+      font-size: .78rem;
       font-weight: 700;
 
       white-space: nowrap;
+      transition: all .2s ease;
     }
 
     .fv-btn-satellite:hover {
-      background: rgba(34,211,238,.2);
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--cyan);
     }
 
     /* ================= AI ================= */
 
     .fv-ai-card {
-      padding: 24px;
+      padding: 22px;
 
       background:
         linear-gradient(
           135deg,
-          rgba(22,17,49,.9),
-          rgba(45,17,75,.8)
+          rgba(11, 21, 40, 0.92),
+          rgba(8, 15, 29, 0.95)
         );
 
-      border: 1px solid rgba(232,57,249,.4);
-      border-radius: 16px;
+      border: 1px solid var(--border-medium);
+      border-radius: 14px;
 
       box-shadow:
-        0 8px 32px rgba(232,57,249,.15);
+        0 8px 30px rgba(0, 0, 0, 0.35);
     }
 
     .fv-ai-tag {
@@ -751,38 +795,38 @@
       align-items: center;
       gap: 6px;
 
-      padding: 5px 10px;
+      padding: 4px 9px;
 
-      color: white;
+      color: #e0f2fe;
 
       background:
         linear-gradient(
           135deg,
-          var(--primary-accent),
-          var(--purple)
+          #0284c7,
+          #0369a1
         );
 
       border-radius: 5px;
 
-      font-size: .68rem;
+      font-size: .66rem;
       font-weight: 800;
 
-      letter-spacing: .7px;
+      letter-spacing: .6px;
     }
 
     .fv-ai-content {
-      margin-top: 15px;
-      padding: 16px;
+      margin-top: 14px;
+      padding: 15px;
 
       color: #f1f5f9;
 
-      background: rgba(5,5,20,.35);
+      background: rgba(3, 7, 18, 0.5);
 
-      border-left: 3px solid var(--primary-accent);
+      border-left: 3px solid var(--cyan);
       border-radius: 0 8px 8px 0;
 
-      font-size: .9rem;
-      line-height: 1.65;
+      font-size: .88rem;
+      line-height: 1.6;
 
       white-space: pre-wrap;
     }
@@ -805,7 +849,7 @@
 
       color: var(--text-secondary);
 
-      background: rgba(255,255,255,.03);
+      background: rgba(148, 163, 184, 0.04);
 
       border-radius: 7px;
 
@@ -828,22 +872,23 @@
     }
 
     .fv-suggestion-chip {
-      padding: 7px 12px;
+      padding: 6px 12px;
 
       color: var(--text-secondary);
 
-      background: rgba(255,255,255,.04);
+      background: rgba(148, 163, 184, 0.05);
 
-      border: 1px solid rgba(255,255,255,.1);
+      border: 1px solid rgba(148, 163, 184, 0.12);
       border-radius: 999px;
 
-      font-size: .74rem;
+      font-size: .72rem;
+      transition: all .2s ease;
     }
 
     .fv-suggestion-chip:hover {
-      color: white;
+      color: #ffffff;
       border-color: var(--cyan);
-      background: rgba(34,211,238,.1);
+      background: rgba(56, 189, 248, 0.08);
     }
 
     .fv-chat-input-row {
@@ -854,33 +899,46 @@
     .fv-chat-input {
       flex: 1;
 
-      padding: 12px;
+      padding: 11px 13px;
 
-      color: white;
+      color: #ffffff;
 
-      background: rgba(5,5,20,.6);
+      background: var(--bg-input);
 
-      border: 1px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 8px;
 
       outline: none;
+      transition: all .2s ease;
     }
 
     .fv-chat-input:focus {
       border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.18);
     }
 
     .fv-btn-send {
       padding: 0 20px;
 
-      color: #07111f;
+      color: #ffffff;
 
-      background: var(--cyan);
+      background:
+        linear-gradient(
+          135deg,
+          #0284c7,
+          #2563eb
+        );
 
-      border: none;
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 8px;
 
-      font-weight: 800;
+      font-weight: 700;
+      font-size: .82rem;
+      transition: all .2s ease;
+    }
+
+    .fv-btn-send:hover {
+      filter: brightness(1.12);
     }
 
     .fv-chat-response {
@@ -889,7 +947,8 @@
 
       color: var(--text-secondary);
 
-      background: rgba(255,255,255,.04);
+      background: rgba(3, 7, 18, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.08);
 
       border-radius: 8px;
 
@@ -909,7 +968,7 @@
 
       padding: 20px;
 
-      background: rgba(4,3,15,.82);
+      background: rgba(2, 6, 14, 0.85);
 
       backdrop-filter: blur(10px);
 
@@ -924,12 +983,12 @@
 
       padding: 22px;
 
-      background: #151133;
+      background: #0b1426;
 
       border: 1px solid var(--glass-border-cyan);
-      border-radius: 16px;
+      border-radius: 14px;
 
-      box-shadow: 0 25px 70px rgba(0,0,0,.6);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
     }
 
     .fv-modal-header {
@@ -941,26 +1000,26 @@
     }
 
     .fv-modal-header h2 {
-      color: white;
-      font-size: 1.1rem;
+      color: #ffffff;
+      font-size: 1.05rem;
     }
 
     .fv-close {
       width: 32px;
       height: 32px;
 
-      color: white;
+      color: #ffffff;
 
-      background: rgba(255,255,255,.08);
+      background: rgba(148, 163, 184, 0.08);
 
-      border: 1px solid rgba(255,255,255,.1);
+      border: 1px solid rgba(148, 163, 184, 0.15);
       border-radius: 7px;
 
       font-size: 18px;
     }
 
     .fv-close:hover {
-      background: rgba(239,68,68,.2);
+      background: rgba(239, 68, 68, 0.2);
     }
 
     /* ================= EMPTY ================= */
@@ -970,21 +1029,22 @@
 
       text-align: center;
 
-      background: rgba(255,255,255,.025);
+      background: rgba(148, 163, 184, 0.02);
 
-      border: 1px dashed rgba(255,255,255,.12);
+      border: 1px dashed rgba(148, 163, 184, 0.14);
 
       border-radius: 14px;
     }
 
     .fv-empty-icon {
-      font-size: 40px;
+      font-size: 38px;
       margin-bottom: 12px;
     }
 
     .fv-empty-state h3 {
-      color: white;
+      color: #ffffff;
       margin-bottom: 6px;
+      font-size: 1.05rem;
     }
 
     .fv-empty-state p {
@@ -1050,7 +1110,7 @@
       }
 
       .fv-header-title {
-        font-size: 2rem;
+        font-size: 1.85rem;
       }
 
       .fv-status-pill {
@@ -1268,6 +1328,15 @@ function FieryVisionApp() {
     );
   };
 
+  const getPriorityBadgeClass = (prio) => {
+    const p = String(prio || "").toLowerCase();
+    if (p === "critical") return "fv-badge-critical";
+    if (p === "high") return "fv-badge-danger";
+    if (p === "moderate" || p === "medium") return "fv-badge-warning";
+    if (p === "low") return "fv-badge-success";
+    return "fv-badge-neutral";
+  };
+
   const temporal = analysisData?.temporal_summary || {};
 
 
@@ -1288,7 +1357,9 @@ function FieryVisionApp() {
 
         <div className="fv-brand">
 
-          <div className="fv-brand-icon">🛰️</div>
+          <div className="fv-brand-icon" style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <img src="assets/logo.jpg" alt="FieryVision Logo" style={{width:"30px", height:"30px", borderRadius:"6px", objectFit:"cover"}} />
+          </div>
 
           <div className="fv-brand-text">
             <h1>FieryVision AI Assistant</h1>
@@ -1410,7 +1481,7 @@ function FieryVisionApp() {
 
       {!analysisData && !isAnalysing && (
         <section className="fv-empty-state">
-          <div className="fv-empty-icon">🔥</div>
+          <div className="fv-empty-icon">🛰️</div>
           <h3>Awaiting Location Analysis</h3>
           <p>Enter a latitude and longitude above to begin FieryVision assessment.</p>
         </section>
@@ -1430,7 +1501,7 @@ function FieryVisionApp() {
             <div className="fv-metric-tile highlight">
               <div className="fv-metric-tile-title">Priority</div>
               <div className="fv-metric-tile-value">
-                <span className="fv-badge fv-badge-danger">
+                <span className={"fv-badge " + getPriorityBadgeClass(analysisData.priority)}>
                   {val(analysisData.priority, "Unknown").toUpperCase()}
                 </span>
               </div>
@@ -1521,7 +1592,7 @@ function FieryVisionApp() {
                     </div>
                     <div className="fv-score-label">Risk Score / 100</div>
                   </div>
-                  <span className="fv-badge fv-badge-danger">
+                  <span className={"fv-badge " + getPriorityBadgeClass(analysisData.priority)}>
                     {val(analysisData.priority, "UNKNOWN").toUpperCase()} PRIORITY
                   </span>
                 </div>
@@ -1533,7 +1604,7 @@ function FieryVisionApp() {
                   />
                 </div>
 
-                <div style={{marginTop:"12px", color:"#cbd5e1", fontSize:".8rem"}}>
+                <div style={{marginTop:"12px", color:"var(--text-secondary)", fontSize:".8rem"}}>
                   Method: {val(analysisData.classification_method)}
                 </div>
 
@@ -1555,6 +1626,24 @@ function FieryVisionApp() {
                   <span className="fv-data-label">Thermal Detected</span>
                   <span className="fv-data-val">
                     {analysisData.thermal_activity_detected ? "Yes" : "No"}
+                  </span>
+                </div>
+
+                <div className="fv-data-row">
+                  <span className="fv-data-label">ML Anomaly (Isolation Forest)</span>
+                  <span className="fv-data-val">
+                    {analysisData.is_anomaly || analysisData.anomaly_flag
+                      ? "🚨 Outlier Flagged"
+                      : "Normal Behavior"}
+                  </span>
+                </div>
+
+                <div className="fv-data-row">
+                  <span className="fv-data-label">Anomaly Score</span>
+                  <span className="fv-data-val">
+                    {analysisData.anomaly_score != null
+                      ? `${analysisData.anomaly_score} / 1.0`
+                      : "0.00"}
                   </span>
                 </div>
 

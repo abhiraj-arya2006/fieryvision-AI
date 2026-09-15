@@ -35,6 +35,9 @@ class CanonicalEventSchema(BaseModel):
 
     risk_score: float = 0.0
     priority: str = "low"
+    anomaly_score: Optional[float] = 0.0
+    is_anomaly: bool = False
+    anomaly_flag: bool = False
 
     evidence: List[str] = Field(default_factory=list)
     explanation: Optional[str] = None
@@ -77,6 +80,9 @@ class LocationAnalysisResponse(BaseModel):
     classification_confidence: Optional[float] = None
     risk_score: float = 0.0
     priority: str = "low"
+    anomaly_score: Optional[float] = 0.0
+    is_anomaly: bool = False
+    anomaly_flag: bool = False
     evidence: List[str] = Field(default_factory=list)
     explanation: Optional[str] = None
 
@@ -100,7 +106,10 @@ class StatisticsResponse(BaseModel):
     persistent_events: int
     natural_events: int
     agricultural_events: int
-    high_priority_events: int
+    critical_priority_events: int = 0
+    high_priority_events: int = 0
+    moderate_priority_events: int = 0
+    low_priority_events: int = 0
     classified_events: int
     unclassified_events: int
     classification_mode: str

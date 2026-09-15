@@ -35,13 +35,22 @@ app.add_middleware(
 # Include main API router under /api
 app.include_router(api_router, prefix="/api")
 
+# Mount static frontend files under /app
+import os
+from fastapi.staticfiles import StaticFiles
+
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+if os.path.exists(frontend_path):
+    app.mount("/app", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
 @app.get("/")
 def root():
     return {
         "service": "FieryVision AI Backend API",
         "status": "online",
         "docs": "/docs",
-        "health": "/api/health"
+        "health": "/api/health",
+        "frontend": "/app/map.html"
     }
 
 if __name__ == "__main__":
