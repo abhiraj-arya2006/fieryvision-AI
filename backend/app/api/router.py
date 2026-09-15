@@ -13,7 +13,9 @@ from app.schemas.event import (
     FacilitiesResponse,
     FacilitySchema,
     StatisticsResponse,
-    SatelliteContextResponse
+    SatelliteContextResponse,
+    ChatRequest,
+    ChatResponse
 )
 from app.services.firms_service import fetch_firms_active_events, HISTORICAL_GIASPURA_EVENTS
 from app.services.industrial_service import (
@@ -25,7 +27,8 @@ from app.services.industrial_service import (
 from app.services.temporal_service import analyze_temporal_persistence
 from app.services.evidence_service import evaluate_evidence
 from app.services.satellite_service import get_satellite_context_metadata
-from app.services.llm_service import generate_explanation
+from app.services.llm_service import generate_explanation, generate_chat_response
+
 
 router = APIRouter()
 
@@ -386,3 +389,20 @@ async def get_satellite_context(event_id: str = Path(..., description="Target ev
         meta = get_satellite_context_metadata(event_id)
         
     return SatelliteContextResponse(**meta)
+
+
+@router.post("/chat", response_model=ChatResponse, tags=["AI"])
+async def chat(payload: ChatRequest):
+    """
+    Answer a user question grounded strictly in the provided FieryVision investigation context.
+    Uses local Ollama with qwen2.5:14b. Returns concise bullet-point response.
+    """
+    if not payload.question.strip():
+        raise HTTPException(status_code=400, detail="Question must not be empty.")
+
+    context = payload.context or {}
+    response_text, llm_ok = await generate_chat_response(payload.question, context)
+    return ChatResponse(
+        response=response_text or "- AI explanation unavailable — Ollama/Qwen service is offline.",
+        llm_available=llm_ok
+    )

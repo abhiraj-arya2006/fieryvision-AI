@@ -116,3 +116,17 @@ class SatelliteContextResponse(BaseModel):
     bands_available: List[str] = Field(default_factory=list)
     provider: Optional[str] = None
     message: str
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(..., min_length=1, description="User question for FieryVision AI")
+    context: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Investigation context from a previous analyse-location call"
+    )
+
+
+class ChatResponse(BaseModel):
+    response: str
+    llm_available: bool
+

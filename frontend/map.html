@@ -1,0 +1,4135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FieryVision | AI Thermal Intelligence</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+/* =========================================================
+   FIERYVISION — SIH EDITION
+   ========================================================= */
+
+:root{
+
+    --bg:#050914;
+    --bg2:#08111e;
+
+    --panel:rgba(8,15,28,.78);
+    --panel2:rgba(12,21,37,.88);
+
+    --border:rgba(130,180,255,.16);
+    --border2:rgba(130,180,255,.28);
+
+    --text:#edf6ff;
+    --muted:#8497ae;
+    --muted2:#52657b;
+
+    --cyan:#39d9ff;
+    --cyan2:#1598d1;
+
+    --violet:#8768ff;
+    --purple:#b46cff;
+
+    --red:#ff4d4d;
+    --orange:#ff9b3d;
+    --green:#53d88b;
+    --blue:#4fa7ff;
+
+    --shadow:
+        0 20px 60px rgba(0,0,0,.45);
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    margin:0;
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+}
+
+
+/* =========================================================
+   ANIMATED ANTIGRAVITY BACKGROUND
+   ========================================================= */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-20;
+
+    overflow:hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(60,160,255,.12),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(130,70,255,.10),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #040812,
+            #07101d 45%,
+            #050914
+        );
+
+}
+
+
+/* large atmospheric blobs */
+
+.glow{
+
+    position:absolute;
+
+    width:650px;
+    height:650px;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:.18;
+
+    pointer-events:none;
+
+}
+
+.glow.one{
+
+    background:#0879ff;
+
+    top:-350px;
+    left:-180px;
+
+    animation:
+        glowOne 20s ease-in-out infinite alternate;
+
+}
+
+.glow.two{
+
+    background:#713cff;
+
+    right:-350px;
+    bottom:-300px;
+
+    animation:
+        glowTwo 25s ease-in-out infinite alternate;
+
+}
+
+.glow.three{
+
+    background:#00d9ff;
+
+    width:350px;
+    height:350px;
+
+    left:40%;
+    top:45%;
+
+    opacity:.07;
+
+    animation:
+        glowThree 18s ease-in-out infinite alternate;
+
+}
+
+
+@keyframes glowOne{
+
+    0%{
+        transform:translate(0,0);
+    }
+
+    100%{
+        transform:translate(230px,170px);
+    }
+
+}
+
+@keyframes glowTwo{
+
+    0%{
+        transform:translate(0,0);
+    }
+
+    100%{
+        transform:translate(-180px,-120px);
+    }
+
+}
+
+@keyframes glowThree{
+
+    0%{
+        transform:translate(-100px,-50px);
+    }
+
+    100%{
+        transform:translate(120px,90px);
+    }
+
+}
+
+
+/* =========================================================
+   MOVING GRID
+   ========================================================= */
+
+.grid{
+
+    position:absolute;
+
+    width:160%;
+    height:160%;
+
+    left:-30%;
+    top:-25%;
+
+    background-image:
+
+        linear-gradient(
+            rgba(77,143,210,.045) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(77,143,210,.045) 1px,
+            transparent 1px
+        );
+
+    background-size:80px 80px;
+
+    transform:
+        perspective(800px)
+        rotateX(58deg);
+
+    transform-origin:center;
+
+    animation:gridMove 24s linear infinite;
+
+    opacity:.6;
+
+}
+
+
+@keyframes gridMove{
+
+    from{
+        background-position:0 0;
+    }
+
+    to{
+        background-position:0 80px;
+    }
+
+}
+
+
+/* =========================================================
+   ORBITAL RINGS
+   ========================================================= */
+
+.orbit{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    border:1px solid rgba(91,181,255,.08);
+
+    pointer-events:none;
+
+}
+
+.orbit.one{
+
+    width:900px;
+    height:310px;
+
+    top:18%;
+    left:15%;
+
+    transform:rotate(-18deg);
+
+    animation:orbit1 22s ease-in-out infinite;
+
+}
+
+.orbit.two{
+
+    width:700px;
+    height:240px;
+
+    right:-5%;
+    bottom:15%;
+
+    transform:rotate(22deg);
+
+    animation:orbit2 27s ease-in-out infinite;
+
+}
+
+
+@keyframes orbit1{
+
+    0%,100%{
+        transform:rotate(-18deg) translateX(-20px);
+    }
+
+    50%{
+        transform:rotate(-12deg) translateX(30px);
+    }
+
+}
+
+
+@keyframes orbit2{
+
+    0%,100%{
+        transform:rotate(22deg) translateX(20px);
+    }
+
+    50%{
+        transform:rotate(17deg) translateX(-25px);
+    }
+
+}
+
+
+/* =========================================================
+   FLOATING PARTICLES
+   ========================================================= */
+
+.particles{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+}
+
+.particle{
+
+    position:absolute;
+
+    width:3px;
+    height:3px;
+
+    border-radius:50%;
+
+    background:rgba(91,207,255,.7);
+
+    box-shadow:
+        0 0 8px rgba(60,190,255,.5);
+
+    animation:
+        floatParticle 12s ease-in-out infinite,
+        fadeParticle 4s ease-in-out infinite alternate;
+
+}
+
+.particle:nth-child(1){
+    left:8%;
+    top:20%;
+    animation-duration:17s,5s;
+}
+
+.particle:nth-child(2){
+    left:18%;
+    top:70%;
+    animation-duration:20s,4s;
+}
+
+.particle:nth-child(3){
+    left:31%;
+    top:30%;
+    animation-duration:15s,6s;
+}
+
+.particle:nth-child(4){
+    left:46%;
+    top:75%;
+    animation-duration:22s,5s;
+}
+
+.particle:nth-child(5){
+    left:61%;
+    top:15%;
+    animation-duration:18s,4s;
+}
+
+.particle:nth-child(6){
+    left:75%;
+    top:42%;
+    animation-duration:24s,6s;
+}
+
+.particle:nth-child(7){
+    left:88%;
+    top:75%;
+    animation-duration:19s,5s;
+}
+
+.particle:nth-child(8){
+    left:54%;
+    top:53%;
+    animation-duration:16s,4s;
+}
+
+.particle:nth-child(9){
+    left:12%;
+    top:48%;
+    animation-duration:21s,5s;
+}
+
+.particle:nth-child(10){
+    left:83%;
+    top:22%;
+    animation-duration:18s,4s;
+}
+
+
+@keyframes floatParticle{
+
+    0%{
+        transform:translate(0,30px);
+    }
+
+    50%{
+        transform:translate(25px,-30px);
+    }
+
+    100%{
+        transform:translate(-20px,-70px);
+    }
+
+}
+
+
+@keyframes fadeParticle{
+
+    from{
+        opacity:.15;
+    }
+
+    to{
+        opacity:.75;
+    }
+
+}
+
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app{
+
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar{
+
+    position:absolute;
+
+    top:0;
+    left:0;
+    right:0;
+
+    height:72px;
+
+    z-index:1000;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(4,9,18,.94),
+            rgba(5,10,19,.72)
+        );
+
+    border-bottom:
+        1px solid rgba(89,151,211,.16);
+
+    backdrop-filter:blur(18px);
+
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+}
+
+.logo{
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(47,215,255,.2),
+            rgba(120,75,255,.22)
+        );
+
+    border:
+        1px solid rgba(78,200,255,.3);
+
+    box-shadow:
+        0 0 25px rgba(43,181,255,.12);
+
+    color:white;
+
+    font-weight:800;
+
+    font-size:12px;
+
+}
+
+.brand-name{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    letter-spacing:.02em;
+
+}
+
+.brand-sub{
+
+    font-size:9px;
+
+    margin-top:3px;
+
+    color:#6f849a;
+
+    text-transform:uppercase;
+
+    letter-spacing:.16em;
+
+}
+
+
+/* =========================================================
+   TOP STATUS
+   ========================================================= */
+
+.top-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.ai-status{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:8px 13px;
+
+    border-radius:20px;
+
+    border:
+        1px solid rgba(62,219,255,.2);
+
+    background:
+        rgba(34,151,197,.07);
+
+    color:#a7eaff;
+
+    font-size:10px;
+
+    letter-spacing:.08em;
+
+}
+
+.ai-dot{
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--cyan);
+
+    box-shadow:
+        0 0 10px var(--cyan);
+
+    animation:aiPulse 1.8s infinite;
+
+}
+
+@keyframes aiPulse{
+
+    0%,100%{
+        opacity:.45;
+        transform:scale(.8);
+    }
+
+    50%{
+        opacity:1;
+        transform:scale(1.15);
+    }
+
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+#map{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:1;
+
+    background:#09111b;
+
+}
+
+
+/* map styling */
+
+.leaflet-tile{
+
+    filter:
+        brightness(.62)
+        saturate(.65)
+        contrast(1.12);
+
+}
+
+
+/* =========================================================
+   LEFT CONTROL PANEL
+   ========================================================= */
+
+.sidebar{
+
+    position:absolute;
+
+    z-index:900;
+
+    top:88px;
+    left:18px;
+    bottom:18px;
+
+    width:325px;
+
+    padding:16px;
+
+    overflow-y:auto;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,17,31,.91),
+            rgba(5,12,22,.87)
+        );
+
+    border:
+        1px solid rgba(107,166,224,.19);
+
+    border-radius:14px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.42),
+        inset 0 1px rgba(255,255,255,.035);
+
+    backdrop-filter:blur(22px);
+
+}
+
+
+/* glowing top edge */
+
+.sidebar::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:20px;
+    right:20px;
+    top:-1px;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56,214,255,.7),
+            rgba(140,87,255,.55),
+            transparent
+        );
+
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:12px;
+
+    color:#9eb2c7;
+
+    font-size:10px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.13em;
+
+}
+
+.section-title span{
+
+    color:#53687d;
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   STAT CARDS
+   ========================================================= */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+}
+
+
+.stat{
+
+    position:relative;
+
+    min-height:79px;
+
+    padding:12px;
+
+    overflow:hidden;
+
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24,42,63,.55),
+            rgba(8,17,29,.6)
+        );
+
+    border:
+        1px solid rgba(100,154,205,.14);
+
+    transition:
+        transform .2s,
+        border .2s;
+
+}
+
+
+.stat:hover{
+
+    transform:translateY(-2px);
+
+    border-color:
+        rgba(73,187,255,.35);
+
+}
+
+
+.stat::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:60px;
+    height:60px;
+
+    right:-35px;
+    bottom:-35px;
+
+    border-radius:50%;
+
+    background:
+        rgba(50,175,255,.08);
+
+    filter:blur(12px);
+
+}
+
+
+.stat-label{
+
+    color:#61758b;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+}
+
+
+.stat-number{
+
+    margin-top:8px;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    letter-spacing:-.02em;
+
+}
+
+
+.stat-number.cyan{
+    color:#83e6ff;
+}
+
+.stat-number.red{
+    color:#ff7972;
+}
+
+.stat-number.orange{
+    color:#ffba69;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.divider{
+
+    height:1px;
+
+    margin:17px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(111,154,194,.2),
+            transparent
+        );
+
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.filter{
+
+    margin-bottom:11px;
+
+}
+
+.filter label{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:#71859a;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+
+.filter select{
+
+    width:100%;
+
+    height:34px;
+
+    padding:0 10px;
+
+    outline:none;
+
+    border-radius:7px;
+
+    border:
+        1px solid rgba(103,153,202,.17);
+
+    background:
+        rgba(4,11,20,.82);
+
+    color:#b9c9d7;
+
+    font-size:10px;
+
+}
+
+
+.filter select:focus{
+
+    border-color:
+        rgba(52,202,255,.45);
+
+}
+
+
+/* =========================================================
+   LEGEND
+   ========================================================= */
+
+.legend{
+
+    display:grid;
+
+    gap:8px;
+
+}
+
+
+.legend-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    color:#8193a5;
+
+    font-size:10px;
+
+}
+
+
+.legend-dot{
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    box-shadow:
+        0 0 8px currentColor;
+
+}
+
+
+.legend-dot.red{
+    background:var(--red);
+    color:var(--red);
+}
+
+.legend-dot.orange{
+    background:var(--orange);
+    color:var(--orange);
+}
+
+.legend-dot.green{
+    background:var(--green);
+    color:var(--green);
+}
+
+.legend-dot.blue{
+    background:var(--blue);
+    color:var(--blue);
+}
+
+.legend-dot.white{
+    background:#bdcad4;
+    color:#bdcad4;
+}
+
+
+/* =========================================================
+   SYSTEM CARD
+   ========================================================= */
+
+.system-card{
+
+    margin-top:17px;
+
+    padding:11px;
+
+    border-radius:8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(45,111,153,.08),
+            rgba(107,72,174,.06)
+        );
+
+    border:
+        1px solid rgba(100,158,210,.13);
+
+}
+
+
+.system-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:6px;
+
+    font-size:9px;
+
+    color:#687c90;
+
+}
+
+
+.system-row:last-child{
+    margin-bottom:0;
+}
+
+
+.system-online{
+
+    color:#67e0a1;
+
+}
+
+
+/* =========================================================
+   MAP HUD
+   ========================================================= */
+
+.map-hud{
+
+    position:absolute;
+
+    z-index:700;
+
+    top:90px;
+
+    right:18px;
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+
+.hud-box{
+
+    padding:9px 12px;
+
+    border-radius:8px;
+
+    background:
+        rgba(5,12,21,.72);
+
+    border:
+        1px solid rgba(115,164,211,.16);
+
+    backdrop-filter:blur(12px);
+
+    color:#7890a7;
+
+    font-size:9px;
+
+}
+
+
+.hud-box strong{
+
+    color:#b7d4e7;
+
+}
+
+
+/* =========================================================
+   RADAR SWEEP
+   ========================================================= */
+
+.radar{
+
+    position:absolute;
+
+    z-index:600;
+
+    right:28px;
+
+    bottom:28px;
+
+    width:145px;
+    height:145px;
+
+    border-radius:50%;
+
+    border:
+        1px solid rgba(59,190,255,.17);
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(42,172,226,.04),
+            transparent 68%
+        );
+
+    pointer-events:none;
+
+}
+
+
+.radar::before,
+.radar::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:17px;
+
+    border-radius:50%;
+
+    border:
+        1px solid rgba(63,184,235,.11);
+
+}
+
+
+.radar::after{
+
+    inset:43px;
+
+}
+
+
+.radar-sweep{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:50%;
+
+    height:1px;
+
+    transform-origin:left center;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(55,216,255,.8),
+            transparent
+        );
+
+    animation:
+        radarSweep 5s linear infinite;
+
+}
+
+
+@keyframes radarSweep{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   DRAWER
+   ========================================================= */
+
+.drawer{
+
+    position:absolute;
+
+    z-index:1200;
+
+    top:88px;
+    right:18px;
+    bottom:18px;
+
+    width:410px;
+
+    overflow-y:auto;
+
+    transform:
+        translateX(
+            calc(100% + 30px)
+        );
+
+    transition:
+        transform .32s cubic-bezier(.22,.8,.25,1);
+
+    background:
+        linear-gradient(
+            150deg,
+            rgba(9,18,32,.96),
+            rgba(5,12,22,.95)
+        );
+
+    border:
+        1px solid rgba(103,166,223,.22);
+
+    border-radius:14px;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.5);
+
+    backdrop-filter:blur(25px);
+
+}
+
+
+.drawer.open{
+
+    transform:
+        translateX(0);
+
+}
+
+
+.drawer-header{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:3;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:16px;
+
+    background:
+        rgba(7,15,27,.93);
+
+    border-bottom:
+        1px solid rgba(107,157,205,.13);
+
+}
+
+
+.drawer-title{
+
+    font-size:13px;
+
+    font-weight:650;
+
+}
+
+
+.close{
+
+    width:30px;
+    height:30px;
+
+    border-radius:7px;
+
+    border:
+        1px solid rgba(109,157,204,.17);
+
+    background:
+        rgba(255,255,255,.035);
+
+    color:#9eb0c0;
+
+    font-size:17px;
+
+}
+
+
+.close:hover{
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.drawer-body{
+
+    padding:16px;
+
+}
+
+
+/* =========================================================
+   EVENT CLASSIFICATION
+   ========================================================= */
+
+.event-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:7px 10px;
+
+    margin-bottom:15px;
+
+    border-radius:7px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    border:
+        1px solid rgba(113,163,211,.16);
+
+    color:#b6c9d9;
+
+    font-size:10px;
+
+}
+
+
+.event-dot{
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+}
+
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.details{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:7px;
+
+}
+
+
+.detail{
+
+    padding:10px;
+
+    border-radius:7px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid rgba(111,158,202,.11);
+
+}
+
+
+.detail-label{
+
+    margin-bottom:5px;
+
+    color:#5f7388;
+
+    font-size:8px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+}
+
+
+.detail-value{
+
+    color:#c7d6e1;
+
+    font-size:10px;
+
+    word-break:break-word;
+
+}
+
+
+/* =========================================================
+   EVIDENCE
+   ========================================================= */
+
+.evidence-title{
+
+    margin-top:18px;
+
+    margin-bottom:9px;
+
+    color:#8ea6bb;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.1em;
+
+}
+
+
+.evidence{
+
+    padding-left:18px;
+
+    margin:0;
+
+    color:#7c91a4;
+
+    font-size:10px;
+
+    line-height:1.65;
+
+}
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+.state{
+
+    position:absolute;
+
+    z-index:800;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    display:none;
+
+    width:310px;
+
+    padding:24px;
+
+    text-align:center;
+
+    border-radius:12px;
+
+    background:
+        rgba(7,15,26,.94);
+
+    border:
+        1px solid rgba(104,162,218,.2);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.5);
+
+    backdrop-filter:blur(20px);
+
+}
+
+
+.state.show{
+
+    display:block;
+
+}
+
+
+.loader{
+
+    width:25px;
+    height:25px;
+
+    margin:
+        0 auto 12px;
+
+    border-radius:50%;
+
+    border:
+        2px solid rgba(255,255,255,.1);
+
+    border-top-color:
+        var(--cyan);
+
+    animation:
+        spin .8s linear infinite;
+
+}
+
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+
+.state-title{
+
+    font-size:13px;
+
+    font-weight:600;
+
+    margin-bottom:7px;
+
+}
+
+
+.state-text{
+
+    color:#71859a;
+
+    font-size:10px;
+
+    line-height:1.5;
+
+}
+
+
+/* =========================================================
+   MAP LABEL
+   ========================================================= */
+
+.coordinates{
+
+    position:absolute;
+
+    z-index:700;
+
+    bottom:18px;
+    left:365px;
+
+    padding:8px 11px;
+
+    border-radius:7px;
+
+    background:
+        rgba(4,11,20,.72);
+
+    border:
+        1px solid rgba(103,153,202,.14);
+
+    color:#63798e;
+
+    font-size:9px;
+
+    backdrop-filter:blur(10px);
+
+}
+
+
+/* =========================================================
+   MARKERS
+   ========================================================= */
+
+.event-marker{
+
+    width:17px;
+    height:17px;
+
+    border-radius:50%;
+
+    border:
+        2px solid rgba(255,255,255,.92);
+
+    box-shadow:
+        0 0 0 4px rgba(0,0,0,.28),
+        0 4px 14px rgba(0,0,0,.5);
+
+    animation:
+        markerPulse 2.2s ease-out infinite;
+
+}
+
+
+.event-marker.red{
+
+    background:var(--red);
+
+    box-shadow:
+        0 0 0 4px rgba(255,77,77,.12),
+        0 0 20px rgba(255,77,77,.55);
+
+}
+
+
+.event-marker.orange{
+
+    background:var(--orange);
+
+    box-shadow:
+        0 0 0 4px rgba(255,155,61,.11),
+        0 0 18px rgba(255,155,61,.45);
+
+}
+
+
+.event-marker.green{
+
+    background:var(--green);
+
+}
+
+
+.event-marker.blue{
+
+    background:var(--blue);
+
+}
+
+
+.event-marker.white{
+
+    background:#d0d9df;
+
+}
+
+
+@keyframes markerPulse{
+
+    0%{
+        transform:scale(.9);
+        opacity:.8;
+    }
+
+    50%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(.9);
+        opacity:.8;
+    }
+
+}
+
+
+/* =========================================================
+   POPUP
+   ========================================================= */
+
+.leaflet-popup-content-wrapper{
+
+    background:#0c1624;
+
+    color:#dce9f3;
+
+    border:
+        1px solid rgba(106,163,216,.2);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.4);
+
+}
+
+
+.leaflet-popup-tip{
+
+    background:#0c1624;
+
+}
+
+
+.popup-title{
+
+    font-size:11px;
+
+    font-weight:650;
+
+    margin-bottom:5px;
+
+}
+
+
+.popup-sub{
+
+    color:#71869b;
+
+    font-size:9px;
+
+}
+
+
+/* =========================================================
+   LEAFLET CONTROLS
+   ========================================================= */
+
+.leaflet-control-zoom{
+
+    margin-top:88px !important;
+
+    margin-right:18px !important;
+
+    border:none !important;
+
+}
+
+
+.leaflet-control-zoom a{
+
+    background:
+        rgba(7,15,26,.88) !important;
+
+    color:#a9c0d2 !important;
+
+    border:
+        1px solid rgba(108,158,208,.17) !important;
+
+}
+
+
+.leaflet-control-attribution{
+
+    background:
+        rgba(4,10,18,.7) !important;
+
+    color:#64798d !important;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:850px){
+
+    .sidebar{
+
+        width:275px;
+
+    }
+
+    .drawer{
+
+        width:350px;
+
+    }
+
+    .coordinates{
+
+        left:305px;
+
+    }
+
+}
+
+
+@media(max-width:650px){
+
+    .topbar{
+
+        height:62px;
+
+        padding:0 12px;
+
+    }
+
+    .brand-sub{
+
+        display:none;
+
+    }
+
+    .sidebar{
+
+        top:72px;
+        left:10px;
+
+        width:260px;
+
+        bottom:auto;
+
+        max-height:
+            calc(100vh - 84px);
+
+    }
+
+    .drawer{
+
+        top:72px;
+        right:10px;
+        bottom:10px;
+
+        width:
+            calc(100% - 20px);
+
+    }
+
+    .map-hud{
+
+        display:none;
+
+    }
+
+    .coordinates{
+
+        display:none;
+
+    }
+
+    .radar{
+
+        display:none;
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    *,
+    *::before,
+    *::after{
+
+        animation:none !important;
+
+        transition:none !important;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     BACKGROUND
+     ========================================================= -->
+
+<div class="background">
+
+    <div class="glow one"></div>
+
+    <div class="glow two"></div>
+
+    <div class="glow three"></div>
+
+    <div class="grid"></div>
+
+    <div class="orbit one"></div>
+
+    <div class="orbit two"></div>
+
+
+    <div class="particles">
+
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+
+    </div>
+
+</div>
+
+
+
+<div class="app">
+
+
+<!-- =========================================================
+     TOP BAR
+     ========================================================= -->
+
+<header class="topbar">
+
+
+    <div class="brand">
+
+
+        <div class="logo">
+
+            FV
+
+        </div>
+
+
+        <div>
+
+            <div class="brand-name">
+
+                FieryVision
+
+            </div>
+
+
+            <div class="brand-sub">
+
+                AI Thermal Intelligence &nbsp;•&nbsp; SIH 2026
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="top-right">
+
+
+        <div class="ai-status">
+
+            <span class="ai-dot"></span>
+
+            API:
+            <span id="apiStatus">CONNECTING</span>
+
+        </div>
+
+
+        <a
+            href="assistant.html"
+            style="
+                display:inline-block;
+                margin-left:16px;
+                padding:7px 16px;
+                background:rgba(56,184,255,.13);
+                border:1px solid rgba(56,184,255,.32);
+                border-radius:7px;
+                color:#39d9ff;
+                font-size:11px;
+                font-weight:600;
+                letter-spacing:.06em;
+                text-decoration:none;
+                text-transform:uppercase;
+            "
+        >
+            🤖 AI Assistant
+        </a>
+
+
+    </div>
+
+
+</header>
+
+
+
+
+<!-- =========================================================
+     MAP
+     ========================================================= -->
+
+<div id="map"></div>
+
+
+
+<!-- =========================================================
+     MAP HUD
+     ========================================================= -->
+
+<div class="map-hud">
+
+    <div class="hud-box">
+
+        ZONE:
+        <strong>GIASPURA</strong>
+
+    </div>
+
+
+    <div class="hud-box">
+
+        MODE:
+        <strong>THERMAL</strong>
+
+    </div>
+
+
+    <div class="hud-box">
+
+        LAT:
+        <strong>30.875625</strong>
+
+    </div>
+
+
+    <div class="hud-box">
+
+        LNG:
+        <strong>75.898481</strong>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SIDEBAR
+     ========================================================= -->
+
+<aside class="sidebar">
+
+
+    <div class="section-title">
+
+        Thermal Overview
+
+        <span>LIVE</span>
+
+    </div>
+
+
+    <div class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                Active Events
+
+            </div>
+
+            <div
+                class="stat-number cyan"
+                id="statActive"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                Industrial Events
+
+            </div>
+
+            <div
+                class="stat-number red"
+                id="statIndustrial"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                Persistent Sources
+
+            </div>
+
+            <div
+                class="stat-number orange"
+                id="statPersistent"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                Natural Events
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="statNatural"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                Agricultural
+
+            </div>
+
+            <div
+                class="stat-number"
+                id="statAgricultural"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+
+                High Priority
+
+            </div>
+
+            <div
+                class="stat-number red"
+                id="statPriority"
+            >
+                —
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="divider"></div>
+
+
+
+    <!-- =====================================================
+         FILTERS
+         ===================================================== -->
+
+    <div class="section-title">
+
+        Intelligence Filters
+
+        <span>LOCAL</span>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Classification
+        </label>
+
+        <select
+            id="classificationFilter"
+        >
+
+            <option value="all">
+                All Classifications
+            </option>
+
+            <option value="Probable Industrial Fire">
+                Probable Industrial Fire
+            </option>
+
+            <option value="Probable Persistent Industrial Thermal Source">
+                Persistent Industrial Source
+            </option>
+
+            <option value="Probable Agricultural Burning">
+                Agricultural Burning
+            </option>
+
+            <option value="Probable Natural / Forest Fire">
+                Natural / Forest Fire
+            </option>
+
+            <option value="Other / Unknown">
+                Other / Unknown
+            </option>
+
+            <option value="Unclassified Thermal Anomaly">
+                Unclassified Anomaly
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Priority
+        </label>
+
+        <select id="priorityFilter">
+
+            <option value="all">
+                All Priorities
+            </option>
+
+            <option value="high">
+                High
+            </option>
+
+            <option value="medium">
+                Medium
+            </option>
+
+            <option value="low">
+                Low
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Persistence
+        </label>
+
+        <select id="persistenceFilter">
+
+            <option value="all">
+                All
+            </option>
+
+            <option value="persistent">
+                Persistent
+            </option>
+
+            <option value="non-persistent">
+                Non-Persistent
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Confidence
+        </label>
+
+        <select id="confidenceFilter">
+
+            <option value="all">
+                All Confidence
+            </option>
+
+            <option value="high">
+                High
+            </option>
+
+            <option value="medium">
+                Medium
+            </option>
+
+            <option value="low">
+                Low
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <div class="divider"></div>
+
+
+
+    <!-- =====================================================
+         LEGEND
+         ===================================================== -->
+
+    <div class="section-title">
+
+        Event Classification
+
+        <span>6 TYPES</span>
+
+    </div>
+
+
+    <div class="legend">
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot red"></span>
+
+            Probable Industrial Fire
+
+        </div>
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot orange"></span>
+
+            Persistent Industrial Source
+
+        </div>
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot green"></span>
+
+            Agricultural Burning
+
+        </div>
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot blue"></span>
+
+            Natural / Forest Fire
+
+        </div>
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot white"></span>
+
+            Other / Unknown
+
+        </div>
+
+
+        <div class="legend-row">
+
+            <span class="legend-dot white"></span>
+
+            Unclassified Thermal Anomaly
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SYSTEM
+         ===================================================== -->
+
+    <div class="system-card">
+
+
+        <div class="system-row">
+
+            <span>
+                Monitoring Engine
+            </span>
+
+            <span class="system-online">
+                ONLINE
+            </span>
+
+        </div>
+
+
+        <div class="system-row">
+
+            <span>
+                Backend API
+            </span>
+
+            <span id="apiStatus">
+                CONNECTING
+            </span>
+
+        </div>
+
+
+        <div class="system-row">
+
+            <span>
+                Classification
+            </span>
+
+            <span>
+                Evidence-Based
+            </span>
+
+        </div>
+
+
+        <div class="system-row">
+
+            <span>
+                Monitoring Zone
+            </span>
+
+            <span>
+                Giaspura
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =========================================================
+     RADAR
+     ========================================================= -->
+
+<div class="radar">
+
+    <div class="radar-sweep"></div>
+
+</div>
+
+
+
+<!-- =========================================================
+     COORDINATES
+     ========================================================= -->
+
+<div class="coordinates">
+
+    MONITORING ZONE &nbsp;|&nbsp;
+
+    30.875625° N
+
+    &nbsp;·&nbsp;
+
+    75.898481° E
+
+</div>
+
+
+
+<!-- =========================================================
+     STATE
+     ========================================================= -->
+
+<div
+    class="state"
+    id="state"
+>
+
+    <div
+        class="loader"
+        id="loader"
+    ></div>
+
+
+    <div
+        class="state-title"
+        id="stateTitle"
+    >
+        Initializing FieryVision
+    </div>
+
+
+    <div
+        class="state-text"
+        id="stateText"
+    >
+        Connecting to thermal intelligence services...
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     DRAWER
+     ========================================================= -->
+
+<aside
+    class="drawer"
+    id="drawer"
+>
+
+
+    <div class="drawer-header">
+
+        <div class="drawer-title">
+
+            Thermal Event Intelligence
+
+        </div>
+
+
+        <button
+            class="close"
+            id="closeDrawer"
+        >
+
+            ×
+
+        </button>
+
+    </div>
+
+
+    <div
+        class="drawer-body"
+        id="drawerBody"
+    >
+
+    </div>
+
+
+</aside>
+
+
+</div>
+
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+
+<script>
+
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
+
+const API_BASE_URL =
+    "http://127.0.0.1:8000";
+
+
+const GIASPURA_CENTER =
+    [
+        30.875625,
+        75.898481
+    ];
+
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let map;
+
+let allEvents = [];
+
+let allFacilities = [];
+
+let eventMarkers = [];
+
+let facilityMarkers = [];
+
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+function initializeMap(){
+
+    map =
+        L.map(
+            "map",
+            {
+                center:
+                    GIASPURA_CENTER,
+
+                zoom:13,
+
+                zoomControl:true
+            }
+        );
+
+
+    L.tileLayer(
+
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+        {
+            maxZoom:19,
+
+            attribution:
+                "&copy; OpenStreetMap contributors"
+        }
+
+    ).addTo(map);
+
+
+
+    /* Monitoring zone */
+
+    L.circle(
+
+        GIASPURA_CENTER,
+
+        {
+
+            radius:5000,
+
+            color:"#35cfff",
+
+            weight:1,
+
+            opacity:.28,
+
+            fillColor:"#248ec4",
+
+            fillOpacity:.025,
+
+            dashArray:"7 9"
+
+        }
+
+    ).addTo(map);
+
+
+
+    /* inner zone */
+
+    L.circle(
+
+        GIASPURA_CENTER,
+
+        {
+
+            radius:1500,
+
+            color:"#8b6cff",
+
+            weight:1,
+
+            opacity:.12,
+
+            fillOpacity:0,
+
+            dashArray:"3 8"
+
+        }
+
+    ).addTo(map);
+
+
+
+    /* center */
+
+    L.circleMarker(
+
+        GIASPURA_CENTER,
+
+        {
+
+            radius:4,
+
+            color:"#e9f8ff",
+
+            weight:1,
+
+            fillColor:"#42d8ff",
+
+            fillOpacity:1
+
+        }
+
+    )
+
+    .bindTooltip(
+        "GIASPURA MONITORING CENTER"
+    )
+
+    .addTo(map);
+
+}
+
+
+
+/* =========================================================
+   API
+   ========================================================= */
+
+async function apiFetch(endpoint){
+
+    const response =
+        await fetch(
+            API_BASE_URL +
+            endpoint
+        );
+
+
+    if(!response.ok){
+
+        throw new Error(
+            "API Error " +
+            response.status
+        );
+
+    }
+
+
+    return response.json();
+
+}
+
+
+
+/* =========================================================
+   LOAD EVENTS
+   ========================================================= */
+
+async function loadEvents(){
+
+    const data =
+        await apiFetch(
+            "/api/active-events"
+        );
+
+
+    if(
+        Array.isArray(data)
+    ){
+
+        allEvents = data;
+
+    }
+
+    else if(
+        Array.isArray(data.events)
+    ){
+
+        allEvents =
+            data.events;
+
+    }
+
+    else{
+
+        allEvents = [];
+
+    }
+
+
+    renderEvents(
+        allEvents
+    );
+
+}
+
+
+
+/* =========================================================
+   LOAD FACILITIES
+   ========================================================= */
+
+async function loadFacilities(){
+
+    try{
+
+        const data =
+            await apiFetch(
+                "/api/facilities"
+            );
+
+
+        if(
+            Array.isArray(data)
+        ){
+
+            allFacilities =
+                data;
+
+        }
+
+        else if(
+            Array.isArray(data.facilities)
+        ){
+
+            allFacilities =
+                data.facilities;
+
+        }
+
+
+        renderFacilities(
+            allFacilities
+        );
+
+    }
+
+    catch(error){
+
+        console.warn(
+            "Facilities unavailable"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   LOAD STATISTICS
+   ========================================================= */
+
+async function loadStatistics(){
+
+    try{
+
+        const stats =
+            await apiFetch(
+                "/api/statistics"
+            );
+
+
+        updateStatistics(
+            stats || {}
+        );
+
+    }
+
+    catch(error){
+
+        updateStatistics(
+            {}
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   RENDER EVENTS
+   ========================================================= */
+
+function renderEvents(events){
+
+    clearEventMarkers();
+
+
+    events.forEach(
+        event => {
+
+            const lat =
+                Number(
+                    event.latitude ??
+                    event.lat
+                );
+
+
+            const lon =
+                Number(
+                    event.longitude ??
+                    event.lon ??
+                    event.lng
+                );
+
+
+            if(
+                !Number.isFinite(lat) ||
+                !Number.isFinite(lon)
+            ){
+
+                return;
+
+            }
+
+
+            const classification =
+                getClassification(
+                    event
+                );
+
+
+            const colorClass =
+                getColorClass(
+                    classification
+                );
+
+
+            const icon =
+                L.divIcon({
+
+                    className:"",
+
+                    html:
+                        `<div class="event-marker ${colorClass}"></div>`,
+
+                    iconSize:
+                        [17,17],
+
+                    iconAnchor:
+                        [8.5,8.5]
+
+                });
+
+
+            const marker =
+                L.marker(
+                    [lat,lon],
+                    {icon}
+                );
+
+
+            marker.bindPopup(
+                createPopup(
+                    event
+                )
+            );
+
+
+            marker.on(
+                "click",
+                () =>
+                    openDrawer(event)
+            );
+
+
+            marker.addTo(
+                map
+            );
+
+
+            eventMarkers.push(
+                marker
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   FACILITIES
+   ========================================================= */
+
+function renderFacilities(
+    facilities
+){
+
+    clearFacilityMarkers();
+
+
+    facilities.forEach(
+        facility => {
+
+            const lat =
+                Number(
+                    facility.latitude ??
+                    facility.lat
+                );
+
+
+            const lon =
+                Number(
+                    facility.longitude ??
+                    facility.lon ??
+                    facility.lng
+                );
+
+
+            if(
+                !Number.isFinite(lat) ||
+                !Number.isFinite(lon)
+            ){
+
+                return;
+
+            }
+
+
+            const marker =
+                L.circleMarker(
+                    [lat,lon],
+                    {
+
+                        radius:5,
+
+                        color:"#aebdca",
+
+                        weight:1,
+
+                        fillColor:"#53697c",
+
+                        fillOpacity:.8
+
+                    }
+                );
+
+
+            marker.bindTooltip(
+
+                `${escapeHtml(
+                    facility.name ||
+                    facility.facility_name ||
+                    "Industrial Facility"
+                )}`,
+
+                {
+                    direction:"top"
+                }
+
+            );
+
+
+            marker.addTo(
+                map
+            );
+
+
+            facilityMarkers.push(
+                marker
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   POPUP
+   ========================================================= */
+
+function createPopup(event){
+
+    const classification =
+        getClassification(
+            event
+        );
+
+
+    const id =
+        event.event_id ||
+        event.id ||
+        "Unknown";
+
+
+    return `
+
+        <div class="popup-title">
+
+            ${escapeHtml(
+                classification
+            )}
+
+        </div>
+
+        <div class="popup-sub">
+
+            Event ID:
+            ${escapeHtml(id)}
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   DRAWER
+   ========================================================= */
+
+function openDrawer(event){
+
+    const classification =
+        getClassification(
+            event
+        );
+
+
+    const colorClass =
+        getColorClass(
+            classification
+        );
+
+
+    const body =
+        document.getElementById(
+            "drawerBody"
+        );
+
+
+    body.innerHTML = `
+
+        <div class="event-badge">
+
+            <span
+                class="event-dot"
+                style="
+                    background:${getColor(
+                        colorClass
+                    )};
+                    box-shadow:0 0 9px ${getColor(
+                        colorClass
+                    )};
+                "
+            ></span>
+
+            ${escapeHtml(
+                classification
+            )}
+
+        </div>
+
+
+        <div class="details">
+
+            ${detail(
+                "Event ID",
+                event.event_id ??
+                event.id
+            )}
+
+            ${detail(
+                "Classification",
+                classification
+            )}
+
+            ${detail(
+                "Classification Method",
+                event.classification_method
+            )}
+
+            ${detail(
+                "Confidence",
+                event.confidence
+            )}
+
+            ${detail(
+                "Risk Score",
+                event.risk_score != null ? event.risk_score + "/100" : null
+            )}
+
+            ${detail(
+                "Priority",
+                event.priority
+            )}
+
+            ${detail(
+                "FRP (MW)",
+                event.frp
+            )}
+
+            ${detail(
+                "Brightness (K)",
+                event.brightness
+            )}
+
+            ${detail(
+                "Satellite",
+                event.satellite
+            )}
+
+            ${detail(
+                "Detection Time",
+                (event.acq_date && event.acq_time)
+                    ? (event.acq_date + " " + event.acq_time)
+                    : (event.acq_date || null)
+            )}
+
+            ${detail(
+                "Nearest Facility",
+                event.nearest_facility_name
+            )}
+
+            ${detail(
+                "Facility Type",
+                event.nearest_facility_type
+            )}
+
+            ${detail(
+                "Distance to Facility",
+                event.distance_to_facility_m != null
+                    ? Math.round(event.distance_to_facility_m) + " m"
+                    : null
+            )}
+
+            ${detail(
+                "Inside Industrial Zone",
+                event.inside_industrial_zone != null
+                    ? (event.inside_industrial_zone ? "Yes" : "No")
+                    : null
+            )}
+
+            ${detail(
+                "Land Cover",
+                event.landcover
+            )}
+
+            ${detail(
+                "Persistence",
+                event.persistence
+            )}
+
+            ${detail(
+                "Detections (30d)",
+                event.detections_30d
+            )}
+
+            ${detail(
+                "Detections (7d)",
+                event.detections_7d
+            )}
+
+        </div>
+
+
+        <div class="evidence-title">
+
+            Why was this event flagged?
+
+        </div>
+
+
+        ${createEvidence(
+            event
+        )}
+
+    `;
+
+
+    document
+        .getElementById(
+            "drawer"
+        )
+        .classList.add(
+            "open"
+        );
+
+}
+
+
+
+
+/* =========================================================
+   DETAIL
+   ========================================================= */
+
+function detail(
+    label,
+    value
+){
+
+    if(
+        value === undefined ||
+        value === null ||
+        value === ""
+    ){
+
+        value =
+            "Not available";
+
+    }
+
+
+    return `
+
+        <div class="detail">
+
+            <div class="detail-label">
+
+                ${escapeHtml(
+                    label
+                )}
+
+            </div>
+
+
+            <div class="detail-value">
+
+                ${escapeHtml(
+                    String(value)
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   EVIDENCE
+   ========================================================= */
+
+function createEvidence(
+    event
+){
+
+    const evidence =
+        event.evidence ||
+        event.evidence_bullets ||
+        event.evidence_points;
+
+
+    if(
+        !Array.isArray(evidence) ||
+        evidence.length === 0
+    ){
+
+        return `
+
+            <div class="system-card">
+
+                <div class="system-row">
+
+                    <span>
+                        Assessment
+                    </span>
+
+                    <span>
+                        Evidence-Based
+                    </span>
+
+                </div>
+
+                <div
+                    style="
+                    color:#64798d;
+                    font-size:9px;
+                    line-height:1.5;
+                    "
+                >
+
+                    Backend evidence details
+                    are not available for
+                    this event.
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    return `
+
+        <ul class="evidence">
+
+            ${evidence
+                .map(
+                    item =>
+                    `<li>
+                        ${escapeHtml(
+                            String(item)
+                        )}
+                    </li>`
+                )
+                .join("")
+            }
+
+        </ul>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   CLASSIFICATION
+   ========================================================= */
+
+function getClassification(
+    event
+){
+
+    return (
+        event.classification ||
+        "Unclassified Thermal Anomaly"
+    );
+
+}
+
+
+
+/* =========================================================
+   COLOR CLASS
+   ========================================================= */
+
+function getColorClass(
+    classification
+){
+
+    const value =
+        classification
+        .toLowerCase();
+
+
+    if(
+        value.includes(
+            "industrial fire"
+        )
+    ){
+
+        return "red";
+
+    }
+
+
+    if(
+        value.includes(
+            "persistent industrial"
+        )
+    ){
+
+        return "orange";
+
+    }
+
+
+    if(
+        value.includes(
+            "agricultural"
+        )
+    ){
+
+        return "green";
+
+    }
+
+
+    if(
+        value.includes(
+            "natural"
+        ) ||
+        value.includes(
+            "forest"
+        )
+    ){
+
+        return "blue";
+
+    }
+
+
+    return "white";
+
+}
+
+
+
+/* =========================================================
+   COLORS
+   ========================================================= */
+
+function getColor(
+    type
+){
+
+    return {
+
+        red:"#ff4d4d",
+
+        orange:"#ff9b3d",
+
+        green:"#53d88b",
+
+        blue:"#4fa7ff",
+
+        white:"#cbd5dd"
+
+    }[type] || "#cbd5dd";
+
+}
+
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+function applyFilters(){
+
+    const classification =
+        document
+        .getElementById(
+            "classificationFilter"
+        ).value;
+
+
+    const priority =
+        document
+        .getElementById(
+            "priorityFilter"
+        ).value;
+
+
+    const persistence =
+        document
+        .getElementById(
+            "persistenceFilter"
+        ).value;
+
+
+    const confidence =
+        document
+        .getElementById(
+            "confidenceFilter"
+        ).value;
+
+
+    const filtered =
+        allEvents.filter(
+            event => {
+
+                const cls =
+                    getClassification(
+                        event
+                    );
+
+
+                if(
+                    classification !== "all" &&
+                    cls !== classification
+                ){
+
+                    return false;
+
+                }
+
+
+                if(
+                    priority !== "all"
+                ){
+
+                    if(
+                        String(
+                            event.priority ||
+                            ""
+                        ).toLowerCase()
+                        !== priority
+                    ){
+
+                        return false;
+
+                    }
+
+                }
+
+
+                if(
+                    persistence !== "all"
+                ){
+
+                    const value =
+                        String(
+                            event.persistence ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const persistent =
+                        value === "true" ||
+                        value === "yes" ||
+                        value === "persistent" ||
+                        value === "1";
+
+
+                    if(
+                        persistence ===
+                        "persistent" &&
+                        !persistent
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    if(
+                        persistence ===
+                        "non-persistent" &&
+                        persistent
+                    ){
+
+                        return false;
+
+                    }
+
+                }
+
+
+                if(
+                    confidence !== "all"
+                ){
+
+                    if(
+                        String(
+                            event.confidence ||
+                            ""
+                        ).toLowerCase()
+                        !== confidence
+                    ){
+
+                        return false;
+
+                    }
+
+                }
+
+
+                return true;
+
+            }
+        );
+
+
+    renderEvents(
+        filtered
+    );
+
+}
+
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+function updateStatistics(
+    stats
+){
+
+    setStat(
+        "statActive",
+        stats.active_events ??
+        stats.active ??
+        allEvents.length
+    );
+
+
+    setStat(
+        "statIndustrial",
+        stats.industrial_events ??
+        stats.industrial ??
+        count("industrial")
+    );
+
+
+    setStat(
+        "statPersistent",
+        stats.persistent_sources ??
+        stats.persistent ??
+        count("persistent")
+    );
+
+
+    setStat(
+        "statNatural",
+        stats.natural_events ??
+        stats.natural ??
+        count("natural")
+    );
+
+
+    setStat(
+        "statAgricultural",
+        stats.agricultural_events ??
+        stats.agricultural ??
+        count("agricultural")
+    );
+
+
+    setStat(
+        "statPriority",
+        stats.high_priority_events ??
+        stats.high_priority ??
+        priorityCount("high")
+    );
+
+}
+
+
+
+/* =========================================================
+   LOCAL COUNTS
+   ========================================================= */
+
+function count(
+    word
+){
+
+    return allEvents.filter(
+        event =>
+            getClassification(
+                event
+            )
+            .toLowerCase()
+            .includes(word)
+    ).length;
+
+}
+
+
+function priorityCount(
+    priority
+){
+
+    return allEvents.filter(
+        event =>
+            String(
+                event.priority ||
+                ""
+            ).toLowerCase()
+            === priority
+    ).length;
+
+}
+
+
+
+/* =========================================================
+   SET STAT
+   ========================================================= */
+
+function setStat(
+    id,
+    value
+){
+
+    document
+        .getElementById(id)
+        .textContent =
+            value ??
+            "—";
+
+}
+
+
+
+/* =========================================================
+   CLEAR MARKERS
+   ========================================================= */
+
+function clearEventMarkers(){
+
+    eventMarkers.forEach(
+        marker =>
+            map.removeLayer(
+                marker
+            )
+    );
+
+    eventMarkers = [];
+
+}
+
+
+function clearFacilityMarkers(){
+
+    facilityMarkers.forEach(
+        marker =>
+            map.removeLayer(
+                marker
+            )
+    );
+
+    facilityMarkers = [];
+
+}
+
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+function showState(
+    title,
+    text,
+    loading=true
+){
+
+    document
+        .getElementById(
+            "stateTitle"
+        )
+        .textContent =
+            title;
+
+
+    document
+        .getElementById(
+            "stateText"
+        )
+        .textContent =
+            text;
+
+
+    document
+        .getElementById(
+            "loader"
+        )
+        .style.display =
+            loading
+            ? "block"
+            : "none";
+
+
+    document
+        .getElementById(
+            "state"
+        )
+        .classList.add(
+            "show"
+        );
+
+}
+
+
+function hideState(){
+
+    document
+        .getElementById(
+            "state"
+        )
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+
+/* =========================================================
+   ESCAPE
+   ========================================================= */
+
+function escapeHtml(
+    value
+){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+document
+    .getElementById(
+        "closeDrawer"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "drawer"
+                )
+                .classList.remove(
+                    "open"
+                );
+
+        }
+    );
+
+
+[
+    "classificationFilter",
+    "priorityFilter",
+    "persistenceFilter",
+    "confidenceFilter"
+
+].forEach(
+    id => {
+
+        document
+            .getElementById(id)
+            .addEventListener(
+                "change",
+                applyFilters
+            );
+
+    }
+);
+
+
+
+/* =========================================================
+   START APPLICATION
+   ========================================================= */
+
+async function start(){
+
+    initializeMap();
+
+
+    showState(
+        "Initializing FieryVision",
+        "Connecting to thermal intelligence services...",
+        true
+    );
+
+
+    try{
+
+        await Promise.all([
+
+            loadEvents(),
+
+            loadFacilities(),
+
+            loadStatistics()
+
+        ]);
+
+
+        document
+            .getElementById(
+                "apiStatus"
+            )
+            .textContent =
+                "ONLINE";
+
+
+        document
+            .getElementById(
+                "apiStatus"
+            )
+            .style.color =
+                "#67e0a1";
+
+
+        hideState();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        document
+            .getElementById(
+                "apiStatus"
+            )
+            .textContent =
+                "OFFLINE";
+
+
+        document
+            .getElementById(
+                "apiStatus"
+            )
+            .style.color =
+                "#ff7972";
+
+
+        showState(
+            "Monitoring API Unavailable",
+            "Unable to connect to the FieryVision backend. No synthetic live events have been added.",
+            false
+        );
+
+    }
+
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>

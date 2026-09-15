@@ -89,3 +89,32 @@ def test_statistics_endpoint():
     assert "classified_events" in data
     assert "unclassified_events" in data
     assert data["classification_mode"] == "evidence_based"
+
+def test_chat_endpoint():
+    """Test POST /api/chat handles grounded question with fallback or Qwen."""
+    payload = {
+        "question": "Why is this location high priority?",
+        "context": {
+            "latitude": 30.8756,
+            "longitude": 75.8984,
+            "classification": "industrial_heat_source",
+            "risk_score": 75.0,
+            "priority": "high",
+            "nearest_facility_name": "Testing Mill",
+            "evidence": ["Repeated thermal detections"]
+        }
+    }
+    response = client.post("/api/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "response" in data
+    assert "llm_available" in data
+    # Ensure response is bullet points or formatted
+    assert len(data["response"]) > 0
+
+def test_chat_empty_question():
+    """Test POST /api/chat with blank question rejected."""
+    payload = {"question": "   ", "context": {}}
+    response = client.post("/api/chat", json=payload)
+    assert response.status_code in [400, 422]
+

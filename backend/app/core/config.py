@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     FIRMS_MAP_KEY: Optional[str] = os.getenv("FIRMS_MAP_KEY", "")
     BACKEND_URL: str = os.getenv("BACKEND_URL", "http://localhost:8000")
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:14b")
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
     
     # Target Area: Giaspura, Ludhiana, Punjab, India
